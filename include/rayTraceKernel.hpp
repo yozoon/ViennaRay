@@ -20,12 +20,13 @@ public:
                  rayBoundary<NumericType, D> &pRTCBoundary,
                  raySource<NumericType, D> &pSource,
                  std::unique_ptr<rayAbstractParticle<NumericType>> &pParticle,
-                 const size_t pNumOfRayPerPoint, const size_t pNumOfRayFixed)
+                 const size_t pNumOfRayPerPoint, const size_t pNumOfRayFixed,
+                 const NumericType pLowerThreshold)
       : mDevice(pDevice), mGeometry(pRTCGeometry), mBoundary(pRTCBoundary),
         mSource(pSource), mParticle(pParticle->clone()),
         mNumRays(pNumOfRayFixed == 0
                      ? pSource.getNumPoints() * pNumOfRayPerPoint
-                     : pNumOfRayFixed) {
+                     : pNumOfRayFixed), mLowerThreshold(pLowerThreshold) {
     assert(rtcGetDeviceProperty(mDevice, RTC_DEVICE_PROPERTY_VERSION) >=
                30601 &&
            "Error: The minimum version of Embree is 3.6.1");
@@ -84,7 +85,7 @@ public:
           RTCRayHit{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
       const int threadID = omp_get_thread_num();
-      constexpr int numRngStates = 8;
+      constexpr int numRngStates = 6;
       unsigned int seeds[numRngStates];
       if (mUseRandomSeeds) {
         std::random_device rd;
@@ -106,8 +107,6 @@ public:
       rayRNG RngState4(seeds[3]);
       rayRNG RngState5(seeds[4]);
       rayRNG RngState6(seeds[5]);
-      rayRNG RngState7(seeds[6]);
-      rayRNG RngState8(seeds[7]);
 
       // thread-local particle object
       auto particle = mParticle->clone();
@@ -116,7 +115,7 @@ public:
       auto &myHitCounter = threadLocalHitCounter[threadID];
 
       // probabilistic weight
-      const NumericType initialRayWeight = 1.;
+      constexpr NumericType initialRayWeight = 1.;
 
       auto rtcContext = RTCIntersectContext{};
       rtcInitIntersectContext(&rtcContext);
@@ -125,11 +124,11 @@ public:
 
 #pragma omp for schedule(dynamic)
       for (long long idx = 0; idx < mNumRays; ++idx) {
-        particle->initNew(RngState8);
+        particle->initNew(RngState6);
         NumericType rayWeight = initialRayWeight;
 
         mSource.fillRay(rayHit.ray, idx, RngState1, RngState2, RngState3,
-                        RngState4); // fills also tnear
+                        RngState4);
 
         if constexpr (PRINT_PROGRESS) {
           printProgress(progressCount);
@@ -150,7 +149,6 @@ public:
           /* -------- No hit -------- */
           if (rayHit.hit.geomID == RTC_INVALID_GEOMETRY_ID) {
             nongeohitc += 1;
-            reflect = false;
             break;
           }
 
@@ -234,7 +232,10 @@ public:
           if (rayWeight <= 0) {
             break;
           }
-          reflect = rejectionControl(rayWeight, initialRayWeight, RngState6);
+
+          // If the ray weight is above the lower threshold 
+          // we reflect
+          reflect = rayWeight > mLowerThreshold;
           if (!reflect) {
             break;
           }
@@ -364,33 +365,6 @@ public:
   }
 
 private:
-  bool rejectionControl(NumericType &rayWeight, const NumericType &initWeight,
-                        rayRNG &RNG) {
-    // Choosing a good value for the weight lower threshold is important
-    NumericType lowerThreshold = 0.1 * initWeight;
-    NumericType renewWeight = 0.3 * initWeight;
-
-    // If the weight of the ray is above a certain threshold, we always reflect.
-    // If the weight of the ray is below the threshold, we randomly decide to
-    // either kill the ray or increase its weight (in an unbiased way).
-    if (rayWeight >= lowerThreshold) {
-      return true;
-    }
-    // We want to set the weight of (the reflection of) the ray to the value of
-    // renewWeight. In order to stay unbiased we kill the reflection with a
-    // probability of (1 - rayWeight / renewWeight).
-    auto rndm = RNG();
-    auto killProbability = 1.0 - rayWeight / renewWeight;
-    if (rndm < (killProbability * RNG.max())) {
-      // kill the ray
-      return false;
-    }
-    // set rayWeight to new weight
-    rayWeight = renewWeight;
-    // continue ray
-    return true;
-  }
-
   std::vector<NumericType> computeDiscAreas() {
     constexpr double eps = 1e-4;
     const auto bdBox = mGeometry.getBoundingBox();
@@ -504,6 +478,7 @@ private:
   const long long mNumRays;
   bool mUseRandomSeeds = false;
   bool mCalcFlux = true;
+  const NumericType mLowerThreshold;
   rayTracingData<NumericType> *localData = nullptr;
   const rayTracingData<NumericType> *globalData = nullptr;
   rayHitCounter<NumericType> *hitCounter = nullptr;

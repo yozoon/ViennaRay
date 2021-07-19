@@ -21,6 +21,7 @@ private:
   size_t mNumberOfRaysFixed = 0;
   NumericType mDiscRadius = 0;
   NumericType mGridDelta = 0;
+  NumericType mLowerThreshold = 0.01;
   rayTraceBoundary mBoundaryConds[D] = {};
   rayTraceDirection mSourceDirection = rayTraceDirection::POS_Z;
   bool mUseRandomSeeds = false;
@@ -59,7 +60,7 @@ public:
 
     auto tracer = rayTraceKernel<NumericType, D>(
         mDevice, mGeometry, boundary, raySource, mParticle,
-        mNumberOfRaysPerPoint, mNumberOfRaysFixed);
+        mNumberOfRaysPerPoint, mNumberOfRaysFixed, mLowerThreshold);
 
     tracer.useRandomSeeds(mUseRandomSeeds);
     tracer.calcFlux(mCalcFlux);
@@ -157,6 +158,16 @@ public:
   /// functions getTotalFlux(), getNormalizedFlux(), gitHitCounts() and
   /// getRelativeError() can not be used.
   void setCalculateFlux(const bool calcFlux) { mCalcFlux = calcFlux; }
+
+  /// Set the lower threshold for reflecting rays. The ray weight is 
+  /// initially 1 and decreased by stickingProbability * currentRayWeight
+  /// at every reflection. When the ray weight is beneath the lower 
+  /// threshold, the ray is no longer reflected. 
+  /// Attention: if the threshold is set at a high value, a lot of flux 
+  /// may be lost.
+  void setLowerRayWeightThreshold(const NumericType threshold) {
+    mLowerThreshold = threshold;
+  }
 
   /// Returns the total flux on each disc normalized by the disc area and
   /// averaged over the neighborhood.
