@@ -27,6 +27,9 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   SET(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS TRUE CACHE BOOL "Export all symbols")
 endif()
 
+# set whether to build static versions
+option(VIENNARAY_STATIC_BUILD "Link dependencies statically." OFF)
+
 # OpenMP Support
 find_package(OpenMP REQUIRED)
 list(APPEND VIENNARAY_LIBRARIES OpenMP::OpenMP_CXX)
@@ -38,6 +41,10 @@ set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 # by external project
 if(DEFINED ${embree_DIR})
   set(embree_DIR ${embree_DIR} CACHE PATH "Path to embree installation")
+endif()
+
+if(DEFINED ${pybind11_DIR})
+  set(pybind11_DIR ${pybind11_DIR} CACHE PATH "Path to pybind11")
 endif()
 
 ##########################################################################################
@@ -70,6 +77,29 @@ if(VIENNARAY_BUILD_TESTS)
   enable_testing()
   add_subdirectory(Tests)
 endif(VIENNARAY_BUILD_TESTS)
+
+
+#################################################
+# BUILD PYTHON MODULE
+#################################################
+option(VIENNARAY_BUILD_PYTHON_2 "Build for python2.x." OFF)
+option(VIENNARAY_BUILD_PYTHON_3 "Build for python3.x. Trumps python2.x build." OFF)
+
+if(VIENNARAY_BUILD_PYTHON_2 OR VIENNARAY_BUILD_PYTHON_3)
+  # include external project if not already set
+  if(NOT DEFINED pybind11_DIR OR VIENNARAY_BUILD_PYBIND11)
+      add_subdirectory(external/upstream/pybind11)
+  endif()
+
+  # message(STATUS "pybind11_DIR: ${pybind11_DIR}")
+  # find_package(pybind11 QUIET PATHS ${pybind11_DIR})
+  # if(pybind11_FOUND)
+  #   add_subdirectory(Wrapping)
+  # else()
+  #   message(STATUS "No pybind11 install found. If you did not specify a custom install path, you have to build the target pybind11-external.")
+  # endif()
+
+endif()
 
 
 #################################################
