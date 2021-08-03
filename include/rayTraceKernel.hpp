@@ -26,7 +26,8 @@ public:
         mSource(pSource), mParticle(pParticle->clone()),
         mNumRays(pNumOfRayFixed == 0
                      ? pSource.getNumPoints() * pNumOfRayPerPoint
-                     : pNumOfRayFixed), mLowerThreshold(pLowerThreshold) {
+                     : pNumOfRayFixed),
+        mLowerThreshold(pLowerThreshold) {
     assert(rtcGetDeviceProperty(mDevice, RTC_DEVICE_PROPERTY_VERSION) >=
                30601 &&
            "Error: The minimum version of Embree is 3.6.1");
@@ -233,7 +234,7 @@ public:
             break;
           }
 
-          // If the ray weight is above the lower threshold 
+          // If the ray weight is above the lower threshold
           // we reflect
           reflect = rayWeight > mLowerThreshold;
           if (!reflect) {
