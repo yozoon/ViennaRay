@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.4)
 
 project(
   "ViennaRay"
-  VERSION 0.0.1)
+  VERSION 1.0.0)
 
 add_definitions(-DVIENNARAY_VERSION=${PROJECT_VERSION})
 
@@ -43,15 +43,13 @@ if(DEFINED ${embree_DIR})
   set(embree_DIR ${embree_DIR} CACHE PATH "Path to embree installation")
 endif()
 
+# If one wants to uses an Intel SPMD Compiler, the one has to set that here
+set(EMBREE_ISPC_SUPPORT OFF CACHE BOOL "Set whether or not you use Intel's SPMD Compiler")
+
 if(DEFINED ${pybind11_DIR})
   set(pybind11_DIR ${pybind11_DIR} CACHE PATH "Path to pybind11")
 endif()
 
-##########################################################################################
-### If one wants to uses an Intel SPMD Compiler, the one has to set that here
-##########################################################################################
-set(EMBREE_ISPC_SUPPORT OFF CACHE BOOL "Set whether or not you use Intel's SPMD Compiler")
-##########################################################################################
 
 # Include all external dependencies
 include(ExternalProject)
@@ -91,13 +89,12 @@ if(VIENNARAY_BUILD_PYTHON_2 OR VIENNARAY_BUILD_PYTHON_3)
       add_subdirectory(external/upstream/pybind11)
   endif()
 
-  # message(STATUS "pybind11_DIR: ${pybind11_DIR}")
-  # find_package(pybind11 QUIET PATHS ${pybind11_DIR})
-  # if(pybind11_FOUND)
-  #   add_subdirectory(Wrapping)
-  # else()
-  #   message(STATUS "No pybind11 install found. If you did not specify a custom install path, you have to build the target pybind11-external.")
-  # endif()
+  find_package(pybind11 QUIET PATHS ${pybind11_DIR})
+  if(pybind11_FOUND)
+    add_subdirectory(Wrapping)
+  else()
+    message(STATUS "No pybind11 install found. If you did not specify a custom install path, you have to build the target pybind11-external.")
+  endif()
 
 endif()
 

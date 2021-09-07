@@ -8,5 +8,6 @@ if(NOT DEFINED embree_DIR)
 endif()
 
 # if(NOT DEFINED pybind11_DIR OR VIENNARAY_BUILD_PYBIND11)
-#       add_subdirectory(external/upstream/pybind11)
+#       add_subdirectory(pybind11)
+#       message(STATUS "pybind11_DIR: ${pybind11_DIR}")
 # endif()

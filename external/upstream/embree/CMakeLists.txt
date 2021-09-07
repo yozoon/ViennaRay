@@ -4,6 +4,12 @@ set(CMAKE_CXX_STANDARD 17)
 # This cmake policy is for the git_submodules parameter below
 cmake_policy(SET CMP0097 NEW)
 
+IF(VIENNARAY_STATIC_BUILD OR VIENNARAY_BUILD_PYTHON_3 OR VIENNARAY_BUILD_PYTHON_2)
+  SET(embree_STATIC ON)
+ELSE()
+  SET(embree_STATIC OFF)
+ENDIF()
+
 externalproject_add(embree-external
   GIT_REPOSITORY
     https://github.com/embree/embree.git
@@ -49,6 +55,7 @@ externalproject_add(embree-external
     -DEMBREE_ISPC_SUPPORT:BOOL=${EMBREE_ISPC_SUPPORT}
     # We use OpenMP, Embree calls that internal (eventhough it is external to Embree)
     -DEMBREE_TASKING_SYSTEM:STRING=INTERNAL
+    -DEMBREE_STATIC_LIB:BOOL=${embree_STATIC}
   # Do not install
   # If one installes it and tries to use the installed library, then there exists a linkage
   # problem with TBB. Simply use the generated files in the binary directory.

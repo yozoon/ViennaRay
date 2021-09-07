@@ -17,20 +17,14 @@ externalproject_add(pybind11-external
     #-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
     # -DBUILD_TESTING=OFF
     # -DBUILD_EXAMPLES=OFF
-  # BUILD_COMMAND
-  "cmake --build build -- -j4"
-  # # No install needed
-  # INSTALL_COMMAND
-  "cmake --install build"
-  UPDATE_COMMAND
-    ""
+
   USES_TERMINAL_DOWNLOAD
     1
   USES_TERMINAL_UPDATE
     1
   GIT_PROGRESS
     1
-  EXCLUDE_FROM_ALL TRUE
+  # EXCLUDE_FROM_ALL TRUE
 )
 
 # Get install and build directory
