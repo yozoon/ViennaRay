@@ -4,22 +4,14 @@ set(CMAKE_CXX_STANDARD 17)
 # This cmake policy is for the git_submodules parameter below
 cmake_policy(SET CMP0097 NEW)
 
+# Get the number of cores
+include(ProcessorCount)
+ProcessorCount(NPROC)
+
 externalproject_add(embree-external
   GIT_REPOSITORY
     https://github.com/embree/embree.git
   GIT_TAG
-    ## Hash of tags/v3.5.2
-    #e766297adcdaf8e5d8dd996c15aed753255230fd
-    #
-    ## Hash of tags/v3.6.1
-    #d17aec1491a6c664f4da2f0b8ba03c171cbf36a1
-    #
-    ## tags/v3.10.0
-    #0e78b682dc631575b79f1cc43863931e8d411e3b
-    #
-    ## hash of tags/v3.11.0
-    #cc8c3aac00cdb63fb1acb44bcd0fa89a17139533
-    #
     ## hash of tags/v3.13.0
     7c53133eb21424f7f0ae1e25bf357e358feaf6ab
     #
@@ -41,14 +33,13 @@ externalproject_add(embree-external
     -DEMBREE_TUTORIALS=OFF
     -DEMBREE_BACKFACE_CULLING=OFF
     -DEMBREE_FILTER_FUNCTION=ON # setting this option is probably not necessary
-
-    #-DCMAKE_BUILD_TYPE=Debug
+    -DCMAKE_BUILD_TYPE=Release
   CMAKE_CACHE_ARGS
-    #-DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
     -DCMAKE_PREFIX_PATH:PATH=${CMAKE_PREFIX_PATH}
     -DEMBREE_ISPC_SUPPORT:BOOL=${EMBREE_ISPC_SUPPORT}
     # We use OpenMP, Embree calls that internal (eventhough it is external to Embree)
     -DEMBREE_TASKING_SYSTEM:STRING=INTERNAL
+  BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${NPROC}
   # Do not install
   # If one installes it and tries to use the installed library, then there exists a linkage
   # problem with TBB. Simply use the generated files in the binary directory.

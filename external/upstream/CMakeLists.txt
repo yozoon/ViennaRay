@@ -2,7 +2,7 @@
 set_property(DIRECTORY PROPERTY EP_BASE ${DEPENDENCIES_DIR})
 
 # build embree if no path was specified
-if(NOT DEFINED embree_DIR)
+if(NOT embree_FOUND)
     add_subdirectory(embree)
     message(STATUS "embree_DIR: ${embree_DIR}")
 endif()
