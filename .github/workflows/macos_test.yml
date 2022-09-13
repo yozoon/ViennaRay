@@ -40,7 +40,7 @@ jobs:
       env: 
         CC: gcc-11
         CXX: g++-11
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Dembree_DIR=${{github.workspace}}/embree -DVIENNARAY_BUILD_TESTS=ON
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} -Dembree_DIR=${{github.workspace}}/embree/lib/cmake/embree-3.13.0 -DVIENNARAY_BUILD_TESTS=ON
       
     - name: Build tests
       # Build program with the given configuration
