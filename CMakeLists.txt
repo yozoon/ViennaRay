@@ -64,6 +64,7 @@ set(EMBREE_ISPC_SUPPORT OFF CACHE BOOL "Set whether or not you use Intel's SPMD 
 
 # Include all external dependencies
 include(ExternalProject)
+add_custom_target(buildDependencies)
 add_subdirectory(external/upstream)
 
 set(VIENNARAY_INCLUDE_DIRS "${${PROJECT_NAME}_SOURCE_DIR}/include")

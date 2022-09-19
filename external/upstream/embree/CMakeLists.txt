@@ -69,3 +69,6 @@ set(
   CACHE PATH "Path to embree library directories"
   FORCE
   )
+
+# add to buildDependencies target
+add_dependencies(buildDependencies embree-external)
