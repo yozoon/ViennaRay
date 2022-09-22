@@ -31,25 +31,6 @@ endif()
 find_package(OpenMP REQUIRED)
 list(APPEND VIENNARAY_LIBRARIES OpenMP::OpenMP_CXX)
 
-#################################################
-# Check embree dependency
-#################################################
-if(DEFINED ${embree_DIR})
-  find_package(embree 3.0 REQUIRED
-    PATHS ${embree_DIR})
-  message(STATUS "embree_DIR: ${embree_DIR}")
-else()
-  find_package(embree 3.0)
-  if(embree_FOUND)
-    message(STATUS "Found embree at ${embree_DIR}.")
-  else()
-    message(STATUS "Couldn't find embree. Dependency will be built during the first invokation of the build system (e.g. `make`).")
-  endif()
-endif()
-
-# Export value of embree_FOUND to cache so that the CMakeLists in external/upstream can use it
-set(embree_FOUND ${embree_FOUND} CACHE BOOL OFF)
-
 # build dependencies
 set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 
@@ -100,6 +81,9 @@ endif(VIENNARAY_BUILD_TESTS)
 add_library(${PROJECT_NAME} INTERFACE)
 
 # set the correct paths for installation
+if (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}/${PROJECT_NAME}/")
+endif()
 set(LOCAL_CONFIG_DIR "lib/cmake/${PROJECT_NAME}")
 
 # Adding the install interface generator expression makes sure that the include
