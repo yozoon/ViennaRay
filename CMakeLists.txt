@@ -34,8 +34,6 @@ list(APPEND VIENNARAY_LIBRARIES OpenMP::OpenMP_CXX)
 # build dependencies
 set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 
-# Enable Ray Masking if embree is compiled with ray masking enabled
-set(VIENNARAY_USE_RAY_MASKING EMBREE_RAY_MASK)
 
 ##########################################################################################
 ### If one wants to uses an Intel SPMD Compiler, the one has to set that here
@@ -47,6 +45,13 @@ set(EMBREE_ISPC_SUPPORT OFF CACHE BOOL "Set whether or not you use Intel's SPMD 
 include(ExternalProject)
 add_custom_target(buildDependencies)
 add_subdirectory(external/upstream)
+
+message(STATUS "Ray mask: ${EMBREE_RAY_MASK}")
+
+# Enable Ray Masking if embree is compiled with ray masking enabled
+if(EMBREE_RAY_MASK)
+  add_compile_definitions(VIENNARAY_USE_RAY_MASKING)
+endif(EMBREE_RAY_MASK)
 
 set(VIENNARAY_INCLUDE_DIRS "${${PROJECT_NAME}_SOURCE_DIR}/include")
 

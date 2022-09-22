@@ -59,16 +59,6 @@ set(
   CACHE PATH "Path to embree installation"
   FORCE
   )
-set(
-  embree_INCLUDEDIR "${embree_DIR}/include"
-  CACHE PATH "Path to embree include directories"
-  FORCE
-  )
-set(
-  embree_LIBRARYDIR "${embree_DIR}/lib"
-  CACHE PATH "Path to embree library directories"
-  FORCE
-  )
 
 # add to buildDependencies target
 add_dependencies(buildDependencies embree-external)
