@@ -27,7 +27,7 @@ ENDMACRO()
 add_custom_target(buildTests)
 
 set(ViennaRay_DIR "${ViennaRay_BINARY_DIR}")
-set(ViennaRay_COMMON_TARGET ${PROJECT_NAME})
+# set(ViennaRay_COMMON_TARGET ${PROJECT_NAME})
 
 SUBDIRLIST(EXAMPLE_DIRS ${CMAKE_CURRENT_LIST_DIR})
 
