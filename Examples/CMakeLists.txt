@@ -8,7 +8,10 @@ if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUGS} -fno-omit-frame-pointer -fsanitize=address -fsanitize=thread -fsanitize=memory" CACHE STRING "")
 endif()
 
-find_package(embree 3.0 PATHS ${embree_DIR} REQUIRED)
+find_package(embree 3.0 PATHS ${embree_DIR})
+if(NOT embree_FOUND)
+  message(STATUS "embree couldn't be found at configuration time. Please make sure to invoke the `buildDependencies` target first. (e.g. with `make buildDependencies`)")
+endif()
 list(APPEND VIENNARAY_LIBRARIES embree)
 
 MACRO(SUBDIRLIST result curdir)
