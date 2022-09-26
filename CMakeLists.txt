@@ -41,6 +41,28 @@ set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
 set(EMBREE_ISPC_SUPPORT OFF CACHE BOOL "Set whether or not you use Intel's SPMD Compiler")
 ##########################################################################################
 
+#################################################
+# Check embree dependency
+#################################################
+if(DEFINED ${embree_DIR})
+  find_package(embree 3.0 REQUIRED
+    PATHS ${embree_DIR})
+  message(STATUS "embree_DIR: ${embree_DIR}")
+else()
+  find_package(embree 3.0)
+  if(embree_FOUND)
+    message(STATUS "Found embree at ${embree_DIR}.")
+  else()
+    message(STATUS "Couldn't find embree. Dependency will be built during the first invocation of the build system (e.g. `make`).")
+    add_subdirectory(embree)
+    message(STATUS "embree_DIR: ${embree_DIR}")
+    set(EMBREE_RAY_MASK OFF)
+  endif()
+endif()
+
+# Export value of embree_FOUND to cache so that the CMakeLists in external/upstream can use it
+set(embree_FOUND ${embree_FOUND} CACHE BOOL OFF)
+
 # Include all external dependencies
 include(ExternalProject)
 add_custom_target(buildDependencies)
