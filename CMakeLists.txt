@@ -28,6 +28,10 @@ if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
       CACHE BOOL "Export all symbols")
 endif()
 
+set(ViennaRay_BINARY_DIR
+    ${PROJECT_BINARY_DIR}
+    CACHE PATH "Path to local ViennaRay installation" FORCE)
+
 # OpenMP Support
 find_package(OpenMP REQUIRED)
 list(APPEND VIENNARAY_LIBRARIES OpenMP::OpenMP_CXX)
