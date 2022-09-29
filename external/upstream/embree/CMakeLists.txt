@@ -64,15 +64,15 @@ else()
     ExternalProject_Get_Property(embree_external INSTALL_DIR BINARY_DIR)
 
     set(embree_DIR "${INSTALL_DIR}")
+
+    # add to buildDependencies target
+    add_dependencies(buildDependencies embree_external)
   endif()
   set(embree_DIR
-      "${INSTALL_DIR}"
+      "${embree_DIR}"
       CACHE PATH "Path to embree installation" FORCE)
 endif()
 
 set(EMBREE_RAY_MASK
     ${EMBREE_RAY_MASK}
     CACHE BOOL "Wheter embree uses ray masking" FORCE)
-
-# add to buildDependencies target
-add_dependencies(buildDependencies embree_external)
