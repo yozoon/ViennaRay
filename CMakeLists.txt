@@ -64,26 +64,6 @@ if(VIENNARAY_USE_WDIST)
   add_compile_definitions(VIENNARAY_USE_WDIST)
 endif(VIENNARAY_USE_WDIST)
 
-# ##################################################################################################
-# BUILD EXAMPLES
-# ##################################################################################################
-option(VIENNARAY_BUILD_EXAMPLES "Build examples." OFF)
-if(VIENNARAY_BUILD_EXAMPLES)
-  add_subdirectory(Examples)
-endif(VIENNARAY_BUILD_EXAMPLES)
-
-# ##################################################################################################
-# BUILD TESTS (Smaller examples for testing)
-# ##################################################################################################
-option(VIENNARAY_BUILD_TESTS "Build tests." OFF)
-if(VIENNARAY_BUILD_TESTS)
-  enable_testing()
-  add_subdirectory(Tests)
-endif(VIENNARAY_BUILD_TESTS)
-
-# ##################################################################################################
-# INSTALL
-# ##################################################################################################
 add_library(${PROJECT_NAME} INTERFACE)
 
 # set the correct paths for installation
@@ -111,6 +91,26 @@ configure_package_config_file(
   "${PROJECT_SOURCE_DIR}/cmake/${PROJECT_NAME}Config.cmake.in"
   "${PROJECT_BINARY_DIR}/${PROJECT_NAME}Config.cmake" INSTALL_DESTINATION ${LOCAL_CONFIG_DIR})
 
+# ##################################################################################################
+# BUILD EXAMPLES
+# ##################################################################################################
+option(VIENNARAY_BUILD_EXAMPLES "Build examples." OFF)
+if(VIENNARAY_BUILD_EXAMPLES)
+  add_subdirectory(Examples)
+endif(VIENNARAY_BUILD_EXAMPLES)
+
+# ##################################################################################################
+# BUILD TESTS (Smaller examples for testing)
+# ##################################################################################################
+option(VIENNARAY_BUILD_TESTS "Build tests." OFF)
+if(VIENNARAY_BUILD_TESTS)
+  enable_testing()
+  add_subdirectory(Tests)
+endif(VIENNARAY_BUILD_TESTS)
+
+# ##################################################################################################
+# INSTALL
+# ##################################################################################################
 # install config files locations are provided by GNUInstallDirs
 install(
   TARGETS ${PROJECT_NAME}
