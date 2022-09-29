@@ -26,7 +26,7 @@ if(@VIENNARAY_USE_WDIST@)
 endif(@VIENNARAY_USE_WDIST@)
 
 set(embree_DIR @embree_DIR@)
-find_dependency(embree 3.0 PATHS ${embree_DIR})
+find_dependency(embree 3.0 PATHS ${embree_DIR} NO_DEFAULT_PATH)
 list(APPEND VIENNARAY_LIBRARIES embree)
 
 # Enable Ray Masking if embree is compiled with ray masking enabled
