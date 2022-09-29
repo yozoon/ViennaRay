@@ -17,7 +17,6 @@ if(NOT ViennaRay_FOUND)
   (e.g. with the `-D VIENNARAY_BUILD_TESTS=ON` flag)\n\
   4. Now the configure step should pick up the built dependencies and proceed as intended.")
 endif()
-endif()
 
 list(PREPEND VIENNARAY_INCLUDE_DIRS ${VIENNARAY_BUILD_INCLUDE_DIRS})
 
