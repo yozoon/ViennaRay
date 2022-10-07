@@ -6,14 +6,20 @@ if(DEFINED ${embree_DIR})
   message(STATUS "Found embree at ${embree_DIR}.")
   add_library(embree_external INTERFACE) # dummy target
 else()
-  find_package(embree 3.0 QUIET)
+  # First try to locate any local build
+  find_package(embree 3.0 QUIET PATHS "${DEPENDENCIES_DIR}/Install/embree_external" NO_DEFAULT_PATH)
+
+  # If that fails look for a system installation
+  if(NOT embree_FOUND)
+    find_package(embree 3.0 QUIET)
+  endif()
   if(embree_FOUND)
     message(STATUS "Found embree at ${embree_DIR}.")
     add_library(embree_external INTERFACE) # dummy target
   else()
     message(
       STATUS
-        "Couldn't find embree. Dependency will be built during the first invocation of the build system (e.g. `make`)."
+        "Couldn't find embree. Dependency will be built with the buildDependencies target (e.g. `make buildDependencies`)."
     )
     # Override CXX standard, since Embree does not confirm to CXX20.
     set(CMAKE_CXX_STANDARD 17)
@@ -31,7 +37,8 @@ else()
       GIT_TAG # hash of tags/v3.13.0
               7c53133eb21424f7f0ae1e25bf357e358feaf6ab
       GIT_SHALLOW true
-      # Embree still lists a (an empty) submodule eventhough it does not exist (anymore). CMake
+      INSTALL_DIR "${DEPENDENCIES_DIR}/Install/embree_external"
+      # Embree still lists a (an empty) submodule even though it does not exist (anymore). CMake
       # >=3.16 can prevent download (error) of submodules by specifying an empty string to
       # git_submodule and setting cmake plicy CMP0097 to NEW.
       GIT_SUBMODULES ""

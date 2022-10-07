@@ -23,6 +23,8 @@ list(PREPEND VIENNARAY_INCLUDE_DIRS ${VIENNARAY_BUILD_INCLUDE_DIRS})
 # Exclude the buildTests target from the `all` target
 set_property(DIRECTORY PROPERTY EXCLUDE_FROM_ALL TRUE)
 
+add_custom_target(buildExamples)
+
 subdirlist(EXAMPLE_DIRS ${CMAKE_CURRENT_LIST_DIR})
 
 # add all examples

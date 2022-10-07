@@ -46,8 +46,6 @@ set(EMBREE_ISPC_SUPPORT
 
 # build dependencies
 set(DEPENDENCIES_DIR ${CMAKE_SOURCE_DIR}/dependencies)
-# external project base directory for all projects in this hierarchy
-set_property(DIRECTORY PROPERTY EP_BASE ${DEPENDENCIES_DIR})
 
 # Include all external dependencies
 include(ExternalProject)
