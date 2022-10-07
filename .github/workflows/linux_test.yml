@@ -1,11 +1,6 @@
 name: Linux
 
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
-  workflow_dispatch:
+on: workflow_dispatch
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
